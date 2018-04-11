@@ -98,135 +98,23 @@
 
         </div>
 
-        <p>With the water routing calculated, we can work out how much water is flowing through each point. I assume that
-            rainfall is constant across the whole map, and iterate through the points in descending order, passing the
-            rainfall, plus the accumulated water flux, from each point to its 'downhill point'. This gives a map of water
-            flux, which usually converges into a nice branching river structure, with lots of small streams feeding a
-            larger central channel.</p>
-        <p>To calculate erosion, I combine the water flux with the slope at each point, as calculated based on the triangle
-            of its neighbours. The exact formula I use is the product of the slope with the square root of the water
-            flux. This isn't necessarily very physical, but it does give nice-looking results. I also add a small term
-            which is proportional to the slope squared. This prevents deep gorges from forming, which might be physically
-            realistic, but don't look good in the graphical style I've chosen.</p>
-        <p>I find it's very important to cap the erosion rate, otherwise strange things can happen. A little goes a very
-            long way with this. Also, erosion always lowers the surface, so it usually helps to drop the sea level afterwards
-            to match.</p>
-        <p>A final tweak to the heightmap is to smooth out the coastlines slightly. The erosion tends to produce quite rough
-            terrain, which becomes tiny islands when cut off by sea level. A few of these can look good, but too many
-            just looks messy. I repeatedly apply a filter where points which are below sea level, but a majority of whose
-            neighbours are above sea level, get pulled up, and vice versa for points which are above sea level and have
-            undersea neighbours. A couple of repeats of this produces a much cleaner coastline.</p>
         <div class="example" id="erode">
 
         </div>
 
-        <h3>Rendering terrain</h3>
-        <p>Now comes the question of drawing the map (at least the physical portion). The easy part is the coastline - we've
-            been doing this already. It's just a matter of drawing line segments where the heightmap crosses zero. There's
-            not a lot extra to do about this.</p>
-        <p>The next component is the rivers. We don't want to display the entire drainage network, because that would cover
-            the whole map. Instead, we only show the drainage from points with above a certain threshold of water flux.
-            By connecting these points to their downstream neighbours, we can trace out the river paths.</p>
-        <p>One problem with this approach is that the rivers tend to zigzag from grid point to grid point, rather than following
-            a smooth path. To solve this, I relax the points in the middle of the path towards their upstream and downstream
-            neighbours (keeping the top and bottom fixed, so that intersections work properly). This smooths things out
-            beautifully.</p>
-        <p>The final part of this is the shading on the sides of hills, which helps indicate the topography. It is a central
-            principle of cartography that we tend to interpret maps as though viewing the terrain from the bottom of
-            the map, looking towards the top. So we want to draw strokes which go up and right if the terrain slopes
-            upwards from left to right, and down and right if the terrain slopes downwards. Similarly, the strokes on
-            the 'near' side of hills should be longer than those on the 'far' side.</p>
-        <p>For each grid point, I calculate the slope, and ignore the point if it is less than a random threshold. For points
-            which pass this test, I draw a short stroke with slope proportional to the horizontal component of the heightmap
-            slope, with a small modifier for the vertical component. If the stroke would be too steep, I split it into
-            several shorter strokes, at the maximum slope, drawn at random around the point.</p>
         <div class="example" id="phys">
 
         </div>
 
-        <h3>Cities, borders</h3>
-        <p>Now that we have the 'physical' portion of the map sorted, we can move to looking at the 'political'. We want
-            to place cities and towns on the map in feasible-looking locations. At the same time, we want the cities
-            to be spread out enough that we can put labels on them without worrying too much about overlap.
-        </p>
-        <p>To place a city, I generate a score for each point, which is a combination of three things:</p>
-        <ul>
-            <li>Water flux - we want cities to be preferentially located on rivers, so high water flux gets a bonus</li>
-            <li>Distance from other cities - we want cities to be spread out, so penalize locations which are too close to
-                an existing city</li>
-            <li>Distance from the edge of the map - the other two criteria alone tend to push cities to the map edge, which
-                isn't ideal, so penalize locations too close to the edge</li>
-        </ul>
-        <p>Every time I add a city, I choose the point with the highest score, then recalculate the scores for all points.
-            I make a distinction between cities, which have a 'region' associated with them, and towns, which don't.
-            The cities are placed first, but otherwise there's no distinction in the code.</p>
-        <p>The next step is to mark out the regions. We want the borders between regions to seem fairly reasonable, following
-            natural borders like rivers and mountain ranges. The way I approach this is to expand regions outwards from
-            each city, so that each region consists of the points which are 'closest' to its city, according to a particular
-            distance measure. This distance measure is calculated by adding up the cost of the route, based on these
-            criteria:</p>
-        <ul>
-            <li>Horizontal distance</li>
-            <li>Slope - uphill is much cheaper than downhill, so regions expand until they hit the top of ridges, then stop</li>
-            <li>Water flux - crossing a river is expensive</li>
-            <li>Shorelines - there is a large penalty for going from land to water (or vice versa), and a smaller penalty
-                for travelling by water</li>
-        </ul>
-        <p>Finally, the borders are drawn, using the same smoothing technique as the rivers.</p>
         <div class="example" id="city">
 
         </div>
 
-        <h3>Placing labels</h3>
-        <p>At this point we can start naming things, using the process described in
-            <a href="/notes/naming-language/">these notes
-            </a>. I generate names for cities, towns and regions, using a consistent language for the whole map.</p>
-        <p>The very last part of the process is to place the labels, avoiding overlaps, obscured cities, labels going off
-            the edge of the map, etc. This sounds easy, but it really really isn't. Ideally, some sort of intelligent
-            layout algorithm would place all the labels, rearranging as necessary. Instead, I have a few hundred lines
-            of spaghetti code which seems to get the right answer most of the time, but which is packed full of magic
-            numbers.</p>
-        <p>In rough outline, what happens is this: the labels are placed in the order 1. cities, 2. towns, 3. regions. For
-            cities and towns, there are four possible slots for the label, above, below, and to each side of the marker.
-            Each label is placed, attempting to avoid the following overlaps (in rough order of importance):
-        </p>
-        <ul>
-            <li>City markers</li>
-            <li>Other city labels</li>
-            <li>The map edge</li>
-            <li>Borders</li>
-            <li>Coastlines</li>
-            <li>Rivers</li>
-        </ul>
-        <p>Obviously it's not usually possible to avoid all of these, so the least bad solution is chosen.</p>
-        <p>For regions, there's a bit more freedom in where to place the label, but the labels are also bigger, and the
-            map is more cluttered at this point. The scoring system rates positions based on proximity to the center
-            of the region, as well as being over land, and penalties for all the overlaps mentioned before.
-        </p>
+    
         <div class="example" id="final">
             <p>I wanted to make a nice interactive example for this, but trying to separate out the label placement code
                 made me feel physically unwell. Sorry about that.</p>
         </div>
-
-        <p>So that's the algorithm, at least in rough outline. The actual code running on the bot has a few other little
-            bits and pieces, which honestly don't do much, but removing them is more trouble than it's worth when the
-            code is working as it stands. The JavaScript code behind this page is available
-            <a href="https://github.com/mewo2/terrain">on GitHub
-            </a>, and if you're really really brave you can look at the original
-            <a href="https://github.com/mewo2/deserts">Python code</a> which was written while I was figuring all this out.</p>
-        <p>There's obviously lots that could be done to improve this. Erosion is just one process, and the next obvious
-            thing to add would be fluvial deposition, which would allow for flood plains, river deltas, etc to form.
-            If you wanted more realistic mountains, then glacial processes would be worth looking at. Volcanic stuff
-            could also be fun.</p>
-        <p>On the graphical side, it could be fun to try to sketch more interesting textures on the map, such as forests
-            or fields. Or you could fill the oceans with sea monsters and lost ships. If you're really brave, you could
-            even look at labelling more features, like mountain ranges and rivers.</p>
-        <p>As always, if you do any of these things, or make anything else interesting with this code or these ideas, please
-            get in touch and let me know.</p>
-        <p>If you would like to buy a print of one of these maps, please visit
-            <a href="https://shop.mewo2.com/">my web shop</a>.</p>
         <script src="./terraincontrols.js"></script>
-        <hr> If you've enjoyed this piece, please consider
-        <a href="https://www.patreon.com/mewo2">contributing on Patreon</a> so I can do more things like this.
     </body>
 </html>
