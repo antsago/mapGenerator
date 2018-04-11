@@ -70,30 +70,6 @@
                 pleasing to the spirit of the machine.</p>
         </div>
 
-        <h3>Rough outlines</h3>
-        <p>One of the difficulties of creating landscapes in a realistic way is that real landscapes aren't created all
-            at once. Instead, they evolve from earlier landscapes, which in turn evolved from even earlier landscapes,
-            and so on back for billions of years. There's no good way to simulate this process in a reasonable amount
-            of time, so we need to cheat slightly.</p>
-        <p>Rather than an infinite regress of older landscapes, I start with a simple 'proto-landscape', built with geometric
-            primitives. This lets me control the broad outlines of the terrain, while leaving the details for the more
-            physical processes to fill in later.</p>
-        <p>Some useful primitives which we can add together:</p>
-        <ul>
-            <li>Constant slope - if you want to pretend this is physically motivated, think of it as tectonic uplift on one
-                side of the map</li>
-            <li>Cone shapes - these can be islands or mountains, or if inverted, lakes or seas</li>
-            <li>Rounded blobs - these make better hills, and can be scattered all around to make a noisy surface</li>
-        </ul>
-        <p>We also have a few operations which are handy:</p>
-        <ul>
-            <li>Normalize - rescale the heights to lie in the range 0-1</li>
-            <li>Round - normalize, then take the square root of the height value, to round off the tops of hills</li>
-            <li>Relax - replace each height value with the average of its neighbours, to smooth the surface</li>
-            <li>Set sea level - translate the heightmap up or down so that a particular quantile is at zero</li>
-        </ul>
-        <p>The particular sequence of primitives and operations used can be varied to produce different kinds of landscape,
-            such as coastlines, islands and mountain ranges.</p>
         <div class="example" id="prim">
             <p>Note: the black line indicates the zero contour, which we treat as 'sea level'. Also, this map uses 4,096
                 (2
