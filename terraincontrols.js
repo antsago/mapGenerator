@@ -18,34 +18,31 @@ function meshDraw() {
     visualizePoints(meshSVG, meshDual ? meshVxs : meshPts);
 }
 
-meshDiv.append("button")
-    .text("Generate random points")
-    .on("click", function () {
-        meshDual = false;
-        meshVxs = null;
-        meshPts = generatePoints(256);
-        meshDraw();
-    });
+function generatePointsButton()
+{
+    meshDual = false;
+    meshVxs = null;
+    meshPts = generatePoints(256);
+    meshDraw();
+}
 
-meshDiv.append("button")
-    .text("Improve points")
-    .on("click", function () {
-        meshPts = improvePoints(meshPts);
-        meshVxs = null;
-        meshDraw();
-    });
+function improvePointsButton() 
+{
+    meshPts = improvePoints(meshPts);
+    meshVxs = null;
+    meshDraw();
+}
 
-var vorBut = meshDiv.append("button")
-    .text("Show Voronoi corners")
-    .on("click", function () {
-        meshDual = !meshDual;
-        if (meshDual) {
-            vorBut.text("Show original points");
-        } else {
-            vorBut.text("Show Voronoi corners");
-        }
-        meshDraw();
-    });
+function voronoiCornersButton() 
+{
+    meshDual = !meshDual;
+    if (meshDual) {
+        vorBut.text("Show original points");
+    } else {
+        vorBut.text("Show Voronoi corners");
+    }
+    meshDraw();
+}
 
 var primDiv = d3.select("div#prim");
 var primSVG = addSVG(primDiv);
