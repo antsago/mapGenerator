@@ -58,59 +58,13 @@
             }
         </style>
 
-        <div class="example" id="mesh">
-            <p>Note: this shows 256 (2
-                <sup>8</sup>) points, to make viewing easier, but the real generator uses 16,384 (2
-                <sup>14</sup>) points. I have a programmer's superstitions about always using powers of 2, which are more
-                pleasing to the spirit of the machine.</p>
-        </div>
+        <div class="example" id="mesh"></div>
+        <div class="example" id="prim"></div>
+        <div class="example" id="erode"></div>
+        <div class="example" id="phys"></div>
+        <div class="example" id="city"></div>
+        <div class="example" id="final"></div>
 
-        <div class="example" id="prim">
-            <p>Note: the black line indicates the zero contour, which we treat as 'sea level'. Also, this map uses 4,096
-                (2
-                <sup>12</sup>) points, for speed.</p>
-        </div>
-
-        <div class="example">
-
-            <h4>Aside: the Planchon-Darboux algorithm</h4>
-
-            <p>The algorithm works by finding the lowest surface with the following two properties:</p>
-
-            <ul>
-                <li>The surface is everywhere at least as high as the input surface</li>
-                <li>Every non-edge point has a neighbour which is lower than it</li>
-            </ul>
-
-            <p>To calculate this, we start with an infinitely high surface everywhere except on the edge, where we use the
-                original heights. Then, on each iteration, we find points which have a neighbour which is lower than
-                them, and set their height to their original height, or the height of their lowest neighbour (plus a
-                small amount), whichever is higher. We halt when we can go a full iteration without changing any point.</p>
-
-            <p>There are various ways of speeding up this algorithm, mostly by tweaking the order in which points are visited.
-                For more details, and a proof of correctness, you can read
-                <a href="http://horizon.documentation.ird.fr/exl-doc/pleins_textes/pleins_textes_7/sous_copyright/010031925.pdf">the original paper</a>.</p>
-
-        </div>
-
-        <div class="example" id="erode">
-
-        </div>
-
-        <div class="example" id="phys">
-
-        </div>
-
-        <div class="example" id="city">
-
-        </div>
-
-    
-        <div class="example" id="final">
-            <p>I wanted to make a nice interactive example for this, but trying to separate out the label placement code
-                made me feel physically unwell. Sorry about that.</p>
-        </div>
-        
         <script src="./d3.v4.js"></script>
         <script src="./priority-queue.js"></script>
         <script src="./language.js"></script>
