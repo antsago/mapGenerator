@@ -76,24 +76,6 @@
                 <sup>12</sup>) points, for speed.</p>
         </div>
 
-        <h3>Erosion</h3>
-        <p>The results of this process can be a little bit on the blobby side, which means they rarely look good on their
-            own. We want to scuff them up a bit, so they look more like real landscapes. We do this by applying an erosion
-            operation.</p>
-        <p>In most of the world, by far the largest influence on the shape of landforms is fluvial (water-based) erosion.
-            Water flows downhill, carrying sediment along with it, carving out valleys and river basins. This is a massively
-            complex phenomenon, and modelling it correctly is a very active research area, but we can get a long way
-            by sketching a simple version of the process.</p>
-        <p>We need to start by tracing the routes that water would take over the grid. For each grid point, we say that
-            water flows to its lowest neighbour, and so on down until we reach the edge of the map. This gives a map
-            of water flow.</p>
-        <p>There's an obvious problem when we reach gridpoints which are lower than all of their neighbours. Do we route
-            the water back uphill? This will probably lead to cycles in the water system, which are trouble. Instead,
-            we want to fill in these gaps (often called sinks or depressions), so that the water always runs downhill
-            all the way to the edge.</p>
-        <p>It's easy to see how to fill in a single gridpoint, but as the depression gets bigger, and possibly links up
-            with other depressions, the number of possible cases multiplies enormously. Luckily, there's an algorithm
-            for filling depressions, called the Planchon-Darboux algorithm.</p>
         <div class="example">
 
             <h4>Aside: the Planchon-Darboux algorithm</h4>
