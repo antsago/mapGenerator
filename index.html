@@ -63,45 +63,6 @@
         <script src="./language.js"></script>
         <script src="./terrain.js"></script>
 
-        <p>
-            <img src="/deserts/map.png" alt="An example map from the generator" style="float: right;" width="60%">
-        </p>
-        <p>These are some notes on how I generate the maps for my Twitter bot
-            <a href="https://twitter.com/unchartedatlas">@unchartedatlas</a>, which is based on a generator I originally produced during
-            <a href="https://github.com/dariusk/NaNoGenMo-2015/issues/156">NaNoGenMo 2015</a>. There's JavaScript code for the generator on Github
-            <a href="https://github.com/mewo2/terrain">here</a>, and the original messy Python generator code can be seen
-            <a href="https://github.com/mewo2/deserts">here</a>.</p>
-        <p>You may also be interested in this
-            <a href="/notes/naming-language/">companion piece</a>, which describes the placename generation.</p>
-        <h3>Inspiration</h3>
-        <p>I wanted to make maps that look like something you'd find at the back of one of the cheap paperback fantasy novels
-            of my youth. I always had a fascination with these imagined worlds, which were often much more interesting
-            than whatever luke-warm sub-Tolkien tale they were attached to.</p>
-        <p>At the same time, I wanted to play with terrain generation with a physical basis. There are loads of articles
-            on the internet which describe terrain generation, and they almost all use some variation on a fractal noise
-            approach, either directly (by adding layers of noise functions), or indirectly (e.g. through midpoint displacement).
-            These methods produce lots of fine detail, but the large-scale structure always looks a bit off. Features
-            are attached in random ways, with no thought to the processes which form landscapes. I wanted to try something
-            a little bit different.</p>
-        <p>There are a few different stages to the generator. First we build up a height-map of the terrain, and do things
-            like routing water flow over the surface. Then we can render the 'physical' portion of the map. Finally we
-            can place cities and 'regions' on the map, and place their labels.</p>
-        <h3>Grids</h3>
-        <p>To represent the heightmap, first we need a grid of points. Although it can be simpler to work on a regular square
-            grid, I much prefer to work on an irregular set of points for something like this. With a regular grid, it's
-            very easy to run into weird artifacts, and you often have to do a lot of postprocessing to hide the effects
-            of the grid. If you use an irregular grid, then there are a few things which are more complicated, but the
-            structure of the grid helps to give the map a rough, organic feel, and you never have to worry about nasty
-            linear artifacts in the finished product.</p>
-        <p>The approach I use is the same as in
-            <a href="http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/">this article</a>, which is one of the better references out there on how to do non-fractal terrain generation.
-            I won't go into too much detail here because that article explains it very clearly, with lots of diagrams.</p>
-        <p>I start by selecting points at random within the map. These points tend to be a bit clumpy and uneven, so I use
-            <a href="https://en.wikipedia.org/wiki/Lloyd%27s_algorithm">Lloyd relaxation</a> to improve the point set. For speed, I only use one iteration of this process, but you
-            can repeat it as many times as you like. There are rapidly diminishing returns after a few iterations though.</p>
-        <p>All of the calculations are actually carried out on the 'dual points' of the original point set, which correspond
-            to the corners of the Voronoi polygons. This has the advantage that the number of neighbours per node is
-            fixed at three, which helps in some parts of the code.</p>
         <div class="example" id="mesh">
             <p>Note: this shows 256 (2
                 <sup>8</sup>) points, to make viewing easier, but the real generator uses 16,384 (2
