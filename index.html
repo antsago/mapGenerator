@@ -63,11 +63,43 @@
             <button onclick="improvePointsButton()">Improve points</button>
             <button onclick="voronoiCornersButton()">Toggle Voronoi corners</button>
         </div>
-        <div class="example" id="prim"></div>
-        <div class="example" id="erode"></div>
-        <div class="example" id="phys"></div>
-        <div class="example" id="city"></div>
-        <div class="example" id="final"></div>
+        <div class="example" id="prim">
+            <button onclick="resetFlatButton()">Reset to flat</button>
+            <button onclick="addSlopeButton()">Add random slope</button>
+            <button onclick="addConeButton()">Add cone</button>
+            <button onclick="addInvConeButton()">Add inverted cone</button>
+            <button onclick="addBlobsButton()">Add five blobs</button>
+            <button onclick="normalizeButton()">Normalize heightmap</button>
+            <button onclick="roundHillsButton()">Round hills</button>
+            <button onclick="relaxButton()">Relax</button>
+            <button onclick="setSeaLevelButton()">Set sea level to median</button>
+        </div>
+        <div class="example" id="erode">
+            <button onclick="generateUnerodedButton()">Generate random heightmap</button>
+            <button onclick="copyHeighMapButton()">Copy heightmap from above</button>
+            <button onclick="erodeButton()">Erode</button>
+            <button onclick="setSeaLevelButtonErode()">Set sea level to median</button>
+            <button onclick="cleanCoastButton()">Clean coastlines</button>
+            <button onclick="showErosionButton()">Show erosion rate</button>
+        </div>
+        <div class="example" id="phys">
+            <button onclick="generateCoastButton()">Generate random heightmap</button>
+            <button onclick="copyHeightButtonPhys()">Copy heightmap from above</button>
+            <button onclick="showCoastButton()">Show coastline</button>
+            <button onclick="showRiversButton()">Show rivers</button>
+            <button onclick="showShadingButton()">Show slope shading</button>
+            <button onclick="hideHeightButton()">Hide heightmap</button>
+        </div>
+        <div class="example" id="city">
+            <button onclick="renderCityButton()">Generate random heightmap</button>
+            <button onclick="renderCityAboveButton()">Copy heightmap from above</button>
+            <button onclick="addCityButton()">Add new city</button>
+            <button onclick="showTerritoriesButton()">Show territories</button>
+        </div>
+        <div class="example" id="final">
+            <button onclick="drawMapButton()">Copy map from above</button>
+            <button onclick="doMapButton()">Generate high resolution map</button>
+        </div>
 
         <script src="./d3.v4.js"></script>
         <script src="./priority-queue.js"></script>
